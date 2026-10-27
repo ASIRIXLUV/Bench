@@ -1112,12 +1112,12 @@ function tgUI(z){const w=LS.get("tgs.worker","")||TG_WORKER,t=TGS_STATE;
  `<input class="txt" id="tgName" placeholder="короткое имя латиницей, напр. my_pack" value="${esc(LS.get("tgs.tgname","")||"")}" aria-label="Короткое имя"><p class="empty" style="margin:2px 0">К имени автоматически добавится _by_имябота — этого требует Telegram.</p>`+
  `<input class="txt" id="tgEmoji" placeholder="эмодзи для стикеров" value="${esc(t.emoji)}" aria-label="Эмодзи">`+
  `<input class="txt" id="tgWorker" placeholder="адрес Worker — не нужен, если включён Telegram Serverless" value="${esc(w)}" aria-label="Адрес Worker">`+
- `<button class="tpl pri" data-tgdo="${z?z.id:""}">Создать пак в Telegram</button><div id="tgst" class="empty"></div></div><p class="empty" style="font-size:11px;opacity:.6">версия сайта: 14 · Worker: ${esc((w||"").replace(/^https?:\/\//,"").slice(0,40)||"не указан")}</p>`}
+ `<button class="tpl pri" data-tgdo="${z?z.id:""}">Создать пак в Telegram</button><div id="tgst" class="empty"></div></div><p class="empty" style="font-size:11px;opacity:.6">версия сайта: 15 · Worker: ${esc((w||"").replace(/^https?:\/\//,"").slice(0,40)||"не указан")}</p>`}
 document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-tgsend],[data-tgdo]");if(!b)return;
  if(b.dataset.tgsend){openSheet("tgsend",{set:b.dataset.tgsend});return}
  const Z=LS.get("tgs.s",[]),z=Z.find(x=>x.id==b.dataset.tgdo),st=document.getElementById("tgst"),say=t=>{if(st)st.textContent=t};
  if(!z||!z.items.length){say("В наборе нет стикеров");return}
- const title=document.getElementById("tgTitle").value.trim(),name=document.getElementById("tgName").value.trim(),emoji=document.getElementById("tgEmoji").value.trim()||"✨",wk=document.getElementById("tgWorker").value.trim().replace(/\/$/,"");if(wk&&!/^https?:\/\//i.test(wk))wk="https://"+wk;if(wk&&location.hostname&&wk.indexOf(location.hostname)>=0){wk=TG_WORKER};
+ const title=document.getElementById("tgTitle").value.trim(),name=document.getElementById("tgName").value.trim(),emoji=document.getElementById("tgEmoji").value.trim()||"✨";let wk=document.getElementById("tgWorker").value.trim().replace(/\/$/,"");if(wk&&!/^https?:\/\//i.test(wk))wk="https://"+wk;if(wk&&location.hostname&&wk.indexOf(location.hostname)>=0){wk=TG_WORKER};
  TGS_STATE.emoji=emoji;if(wk)LS.set("tgs.worker",wk);LS.set("tgs.tgname",name);
  if(!inTG()){say("Откройте сайт из Telegram (Mini App)");return}
  if(!title){say("Введите название");return}
