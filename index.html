@@ -1122,8 +1122,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(!inTG()){say("Откройте сайт из Telegram (Mini App)");return}
  if(!title){say("Введите название");return}
  b.disabled=true;
- try{const SL=TGW&&TGW.Serverless&&TGW.Serverless.call?TGW.Serverless:null,useCloud=SL&&!wk;
-  if(!useCloud&&!wk){say("Укажите адрес Worker или включите Telegram Serverless для бота");b.disabled=false;return}
+ try{const SL=TGW&&TGW.Serverless&&TGW.Serverless.call?TGW.Serverless:null,useCloud=SL&&!wk&&(/tgcloud\.ai$/.test(location.hostname)||window.__TGCLOUD_FORCE);
+  if(!useCloud&&!wk){say(SL?"Сайт открыт не с адреса tgcloud.ai, поэтому Serverless-функция недоступна (ошибка 405). Укажите адрес Worker ниже или разместите сайт через tgcloud push.":"Укажите адрес Worker");b.disabled=false;return}
   const big=[],bufs=[];
   for(let i=0;i<z.items.length;i++){say("Собираю "+(i+1)+" из "+z.items.length+"…");const buf=await tgsOf(await itemSnap(z.items[i]));if(buf.length>65536)big.push(z.items[i].name);bufs.push(buf)}
   if(big.length){say("Не прошли по размеру (больше 64 КБ): "+big.slice(0,5).join(", ")+(big.length>5?" и ещё "+(big.length-5):"")+". Уберите их из набора.");b.disabled=false;return}
@@ -1147,4 +1147,3 @@ document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&"tgt" i
 </script>
 </body>
 </html>
-
