@@ -1098,12 +1098,12 @@ const _ds=drawSheet;drawSheet=function(){_ds.apply(this,arguments);fixCounts()};
 </script>
 <script>
 /* ===== v6: Telegram Mini App + create pack in Telegram via Worker ===== */
-const TG_WORKER="";   // сюда можно вписать адрес Worker, или ввести его в окне «→ Telegram»
+const TG_WORKER="https://dmakidstudio.jacobadamson587.workers.dev";   // сюда можно вписать адрес Worker, или ввести его в окне «→ Telegram»
 const TGW=(window.Telegram&&Telegram.WebApp)||null;
 const inTG=()=>!!(TGW&&TGW.initData);
 try{if(TGW&&TGW.initData){TGW.ready();TGW.expand();try{TGW.disableVerticalSwipes&&TGW.disableVerticalSwipes()}catch(e){}try{TGW.setHeaderColor&&TGW.setHeaderColor("#000000");TGW.setBackgroundColor&&TGW.setBackgroundColor("#000000")}catch(e){}document.documentElement.classList.add("in-tg")}}catch(e){}
 let TGS_STATE={type:"stickers",emoji:"✨"};
-function tgUI(z){const w=LS.get("tgs.worker",TG_WORKER)||"",t=TGS_STATE;
+function tgUI(z){const w=LS.get("tgs.worker","")||TG_WORKER,t=TGS_STATE;
  return`<div class="hd"><b style="flex:1;font-size:19px">Создать пак в Telegram</b><button data-close aria-label="Закрыть">✕</button></div>`+
  (inTG()?"":`<p class="empty">Сайт открыт не из Telegram. Откройте его как Mini App через своего бота — тогда пак создастся от вашего аккаунта.</p>`)+
  `<p class="empty">${z?esc(z.name)+" · "+z.items.length+" шт.":""}</p><div class="card pfx">`+
@@ -1118,7 +1118,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  const Z=LS.get("tgs.s",[]),z=Z.find(x=>x.id==b.dataset.tgdo),st=document.getElementById("tgst"),say=t=>{if(st)st.textContent=t};
  if(!z||!z.items.length){say("В наборе нет стикеров");return}
  const title=document.getElementById("tgTitle").value.trim(),name=document.getElementById("tgName").value.trim(),emoji=document.getElementById("tgEmoji").value.trim()||"✨",wk=document.getElementById("tgWorker").value.trim().replace(/\/$/,"");
- TGS_STATE.emoji=emoji;LS.set("tgs.worker",wk);LS.set("tgs.tgname",name);
+ TGS_STATE.emoji=emoji;if(wk)LS.set("tgs.worker",wk);LS.set("tgs.tgname",name);
  if(!inTG()){say("Откройте сайт из Telegram (Mini App)");return}
  if(!title){say("Введите название");return}
  b.disabled=true;
