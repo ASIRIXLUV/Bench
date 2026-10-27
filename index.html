@@ -1112,7 +1112,7 @@ function tgUI(z){const w=LS.get("tgs.worker","")||TG_WORKER,t=TGS_STATE;
  `<input class="txt" id="tgName" placeholder="короткое имя латиницей, напр. my_pack" value="${esc(LS.get("tgs.tgname","")||"")}" aria-label="Короткое имя"><p class="empty" style="margin:2px 0">К имени автоматически добавится _by_имябота — этого требует Telegram.</p>`+
  `<input class="txt" id="tgEmoji" placeholder="эмодзи для стикеров" value="${esc(t.emoji)}" aria-label="Эмодзи">`+
  `<input class="txt" id="tgWorker" placeholder="адрес Worker — не нужен, если включён Telegram Serverless" value="${esc(w)}" aria-label="Адрес Worker">`+
- `<button class="tpl pri" data-tgdo="${z?z.id:""}">Создать пак в Telegram</button><div id="tgst" class="empty"></div></div><p class="empty" style="font-size:11px;opacity:.6">версия сайта: 15 · Worker: ${esc((w||"").replace(/^https?:\/\//,"").slice(0,40)||"не указан")}</p>`}
+ `<button class="tpl pri" data-tgdo="${z?z.id:""}">Создать пак в Telegram</button><div id="tgst" class="empty"></div></div><p class="empty" style="font-size:11px;opacity:.6">версия сайта: 16 · Worker: ${esc((w||"").replace(/^https?:\/\//,"").slice(0,40)||"не указан")}</p>`}
 document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-tgsend],[data-tgdo]");if(!b)return;
  if(b.dataset.tgsend){openSheet("tgsend",{set:b.dataset.tgsend});return}
  const Z=LS.get("tgs.s",[]),z=Z.find(x=>x.id==b.dataset.tgdo),st=document.getElementById("tgst"),say=t=>{if(st)st.textContent=t};
@@ -1122,10 +1122,10 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(!inTG()){say("Откройте сайт из Telegram (Mini App)");return}
  if(!title){say("Введите название");return}
  b.disabled=true;
- try{const SL=TGW&&TGW.Serverless&&TGW.Serverless.call?TGW.Serverless:null,useCloud=SL&&!wk&&(/tgcloud\.ai$/.test(location.hostname)||window.__TGCLOUD_FORCE);
+ let stage="подготовка";try{const SL=TGW&&TGW.Serverless&&TGW.Serverless.call?TGW.Serverless:null,useCloud=SL&&!wk&&(/tgcloud\.ai$/.test(location.hostname)||window.__TGCLOUD_FORCE);
   if(!useCloud&&!wk){say(SL?"Сайт открыт не с адреса tgcloud.ai, поэтому Serverless-функция недоступна (ошибка 405). Укажите адрес Worker ниже или разместите сайт через tgcloud push.":"Укажите адрес Worker");b.disabled=false;return}
   const big=[],bufs=[];
-  for(let i=0;i<z.items.length;i++){say("Собираю "+(i+1)+" из "+z.items.length+"…");const buf=await tgsOf(await itemSnap(z.items[i]));if(buf.length>65536)big.push(z.items[i].name);bufs.push(buf)}
+  for(let i=0;i<z.items.length;i++){stage="сборка стикера "+(i+1)+" («"+z.items[i].name+"»)";say("Собираю "+(i+1)+" из "+z.items.length+"…");const buf=await tgsOf(await itemSnap(z.items[i]));if(buf.length>65536)big.push(z.items[i].name);bufs.push(buf)}
   if(big.length){say("Не прошли по размеру (больше 64 КБ): "+big.slice(0,5).join(", ")+(big.length>5?" и ещё "+(big.length-5):"")+". Уберите их из набора.");b.disabled=false;return}
   const type=TGS_STATE.type=="emoji"?"emoji":"stickers";let link="";
   if(useCloud){
@@ -1136,11 +1136,11 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   }else{
    const fd=new FormData();fd.append("initData",TGW.initData);fd.append("type",type);fd.append("title",title);fd.append("name",name);fd.append("emoji",emoji);
    bufs.forEach((buf,i)=>fd.append("f"+i,new Blob([buf],{type:"application/x-tgsticker"}),"s"+i+".tgs"));
-   say("Отправляю в Telegram… это может занять до минуты");
+   stage="отправка на Worker";say("Отправляю в Telegram… это может занять до минуты");
    const r=await fetch(wk,{method:"POST",body:fd}),tx=await r.text();let j=null;try{j=JSON.parse(tx)}catch(_){}if(!j)throw new Error("Worker ответил не так, как ожидалось (HTTP "+r.status+"): "+(tx.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim().slice(0,200)||"пустой ответ"));if(!j.ok)throw new Error(j.error||"ошибка");link=j.link}
   say("Готово! Пак создан ("+bufs.length+" шт.)");
   const a=document.createElement("button");a.className="tpl pri";a.textContent="Открыть пак";a.onclick=()=>{try{TGW.openTelegramLink(link)}catch(_){location.href=link}};st.after(a)}
- catch(err){say("Ошибка: "+(err.message||err))}
+ catch(err){say("Ошибка (этап: "+stage+"): "+(err.message||err))}
  b.disabled=false});
 document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&"tgt" in t.dataset)TGS_STATE.type=t.value});
 
