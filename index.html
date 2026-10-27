@@ -1137,7 +1137,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
    const fd=new FormData();fd.append("initData",TGW.initData);fd.append("type",type);fd.append("title",title);fd.append("name",name);fd.append("emoji",emoji);
    bufs.forEach((buf,i)=>fd.append("f"+i,new Blob([buf],{type:"application/x-tgsticker"}),"s"+i+".tgs"));
    say("Отправляю в Telegram… это может занять до минуты");
-   const r=await fetch(wk,{method:"POST",body:fd}),j=await r.json();if(!j.ok)throw new Error(j.error||"ошибка");link=j.link}
+   const r=await fetch(wk,{method:"POST",body:fd}),tx=await r.text();let j=null;try{j=JSON.parse(tx)}catch(_){}if(!j)throw new Error("Worker ответил не так, как ожидалось (HTTP "+r.status+"): "+(tx.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim().slice(0,200)||"пустой ответ"));if(!j.ok)throw new Error(j.error||"ошибка");link=j.link}
   say("Готово! Пак создан ("+bufs.length+" шт.)");
   const a=document.createElement("button");a.className="tpl pri";a.textContent="Открыть пак";a.onclick=()=>{try{TGW.openTelegramLink(link)}catch(_){location.href=link}};st.after(a)}
  catch(err){say("Ошибка: "+(err.message||err))}
